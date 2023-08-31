@@ -1,4 +1,4 @@
-#include "avl.h"
+#include "arvore_avl/avl.h"
 #include <stdio.h>
 #include <stdlib.h>
 
