@@ -23,7 +23,6 @@ int inserir_aluno(tabela *tab, dado *aluno, int *cresceu) {
     printf("%d", retorno);
 
 	if(retorno) {
-        printf("Inserir aluno entrou: ");
 		fseek(tab->arquivo_dados, 0L, SEEK_END);
 		
 		posicaoNovoRegistro = ftell(tab->arquivo_dados);
@@ -129,7 +128,6 @@ void carregarArquivo(tabela *tab) {
 	char nome[16], *linha = (char*) malloc(len), delim[] = ";";
 	strcpy(nome, "indices_avl.dat");
 
-    printf("index\n\n");
 	arq = fopen(nome, "r+");
     
     if(arq != NULL){
@@ -140,7 +138,6 @@ void carregarArquivo(tabela *tab) {
 			ptr = strtok(NULL, delim);
 			//tirar_enter(ptr);
             tab->indice = inserir_avl(inicializar_indice_avl(indice, atoi(ptr)),tab->indice, 0);
-            printf("aloooooooo\n");
         }
 		fclose(arq);
  	}
