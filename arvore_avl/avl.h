@@ -1,7 +1,14 @@
 #ifndef AVL_H
 #define AVL_H
+#include <stdlib.h>
+
+typedef struct indice_avl {
+	int indice; 
+	int codigo;
+} indice_avl;
 
 typedef struct no {
+	indice_avl *index;
 	int valor;
 	int fb;
 	struct no *esquerda, *direita;
@@ -10,7 +17,10 @@ typedef struct no {
 typedef no* arvore;
 
 void inicializar(arvore *raiz);
-arvore inserir_avl (int valor, arvore raiz, int *cresceu);
+indice_avl* inicializar_indice_avl(int indice, int codigo);
+int buscar_indice_avl(arvore raiz, int codigo);
+
+arvore inserir_avl (indice_avl *v, arvore raiz, int *cresceu);
 void pre_order_avl(arvore raiz);
 void in_order_avl(arvore raiz);
 void pos_order_avl(arvore raiz);

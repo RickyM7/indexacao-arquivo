@@ -6,25 +6,48 @@ void inicializar(arvore *raiz) {
 	*raiz = NULL;
 }
 
+indice_avl* inicializar_indice_avl(int indice, int codigo) {
+	indice_avl *novo = (indice_avl*) malloc(sizeof(indice_avl));
+	novo->indice = indice;
+	novo->codigo = codigo;
+	return novo;
+}
+
+int buscar_indice_avl (arvore raiz, int codigo) {
+	if(raiz != NULL) {
+		if(raiz->index->codigo == codigo) {
+			return raiz->index->indice;
+		}
+		else {
+			if(raiz->index->codigo > codigo)
+				return buscar_indice_avl(raiz->esquerda, codigo);
+			else 
+				return buscar_indice_avl(raiz->direita, codigo);
+		}
+	} else {
+		return -1;
+	}
+}
+
 void imprimir_elemento(arvore raiz) {
 	printf("%d [%d]", raiz->valor, raiz->fb);
 }
 
-arvore inserir_avl (int valor, arvore raiz, int *cresceu){
+arvore inserir_avl (indice_avl *v, arvore raiz, int *cresceu){
 	if (raiz == NULL){
 		arvore nova = (arvore) malloc(sizeof(struct no));
 		
 		nova->esquerda = NULL;
 		nova->direita = NULL;
-		nova->valor = valor;
+		nova->index = v;
 		nova->fb = 0;
 
 		*cresceu = 1;
 		
 		return nova;
 	} else {
-		if (valor > raiz->valor){ 
-			raiz->direita = inserir_avl(valor, raiz->direita, cresceu);
+		if (v->codigo > raiz->index->codigo){ 
+			raiz->direita = inserir_avl(v, raiz->direita, cresceu);
 
 			if (*cresceu){
 				switch(raiz->fb){
@@ -43,7 +66,7 @@ arvore inserir_avl (int valor, arvore raiz, int *cresceu){
 			}
 
 		} else {
-			raiz->esquerda = inserir_avl(valor, raiz->esquerda, cresceu);
+			raiz->esquerda = inserir_avl(v, raiz->esquerda, cresceu);
 
 			if (*cresceu){
 				switch(raiz->fb){

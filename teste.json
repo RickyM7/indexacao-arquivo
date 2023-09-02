@@ -1,0 +1,11 @@
+{
+	"aluno":	[{
+			"id":	6,
+			"removido":	0,
+			"nome":	"assa\n",
+			"matéria":	[{
+					"nome-materia":	"aed",
+					"media":	8
+				}]
+		}]
+}
