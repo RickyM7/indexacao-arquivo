@@ -41,6 +41,7 @@ int main (int argc, char*argv[]) {
 					printf("Aluno nao inserido\n");
 				break;
 			case 99:
+				finalizar_arquivo(&tab);
 				exit(0);
 		}
 	}
