@@ -4,7 +4,11 @@
 #include "arquivo.h"
 
 int inicializarArquivo(tabela *tab) {
-	tab->arquivo_dados = fopen("teste.json", "r+b");
+	tab->arquivo_dados = fopen("alunos.json", "r+b");
+	if(tab->arquivo_dados == NULL) {
+		tab->arquivo_dados = fopen("alunos.json", "a+");
+		return inicializarArquivo(tab);
+	}
 	tab->root_dados = carregarConteudoArquivoJson(tab->arquivo_dados, tab->root_dados);
 	tab->indice = NULL;
 
@@ -15,6 +19,7 @@ int inicializarArquivo(tabela *tab) {
 	else
 		return 0;
 }
+
 
 int inserir_aluno(tabela *tab, dado *aluno, int *cresceu) {
     
@@ -40,7 +45,8 @@ dado* ler_dados() {
 
 	dado* novo = (dado*) malloc(sizeof(dado));
 	char * aux = (char *) malloc(256 * sizeof(char));
-
+	
+	printf("DADOS DO ALUNO\n");
 	printf("Codigo: ");
 	while (scanf("%d", &novo->codigo) != 1) {
 		printf("Insira apenas numeros: ");
@@ -50,9 +56,12 @@ dado* ler_dados() {
 
     printf("Nome: ");
 	fgets(aux, 256, stdin);
+
+	char *token = strtok(aux, "\n");
+
 	novo->nome = strdup(aux);
 
-	printf("Materia: \n");
+	printf("DADOS DA MATERIA\n");
     printf("Nome: ");
 	scanf(" %[^\n]%*c", novo->materia.nome);
 
@@ -107,6 +116,8 @@ cJSON *criarJSON(dado *aluno, cJSON *root) {
     return root;
 }
 
+
+
 void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno) {
     criarJSON(aluno, root);
 
@@ -120,39 +131,99 @@ void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno) {
 
 }
 
-void finalizar_arquivo(tabela *tab) {
-    // Salve o JSON no arquivo
-    char *json_str = cJSON_Print(tab->root_dados);
-    fseek(tab->arquivo_dados, 0, SEEK_SET);
-    fwrite(json_str, 1, strlen(json_str), tab->arquivo_dados);
 
-    // Libere a memória
-    free(json_str);
-    cJSON_Delete(tab->root_dados);
+void remover_aluno(tabela *tab, dado *aluno, int *diminuiu, int chave) {
+	if(tab != NULL) {
+		dado aluno = buscar_aluno(tab->arquivo_dados, chave);
+		if(!aluno.removido){
+			tab->indice = remover_avl(tab->indice, aluno.codigo, diminuiu);
+			fseek(tab->arquivo_dados, chave, SEEK_SET);
+			char str[] = "1";
+			fwrite(str, 1, sizeof(char), tab->arquivo_dados);
+			fseek(tab->arquivo_dados, 0L, SEEK_END);
+		}
+		else
+			printf("Erro ao remover\n");
+	}
+}
 
-    // Feche o arquivo
-    fclose(tab->arquivo_dados);
+
+dado buscar_aluno(FILE *arquivo, int indice) {
+	dado temp;
+	if(indice >= 0) { 
+		if(arquivo != NULL){
+			long len = sizeof(char) * 256;
+			char *buffer = (char *) malloc(len);
+			char delim[] = "|";
+			dado temp;
+			fseek(arquivo, indice, SEEK_SET);
+
+			getline(&buffer, &len, arquivo);
+			
+			char *ptr = strtok(buffer, delim);
+			temp.removido = atoi(ptr);
+
+			ptr = strtok(NULL, delim);
+			temp.codigo = atoi(ptr);
+			
+			ptr = strtok(NULL, delim);
+			strcpy(temp.nome, ptr);
+
+			// ptr = strtok(NULL, ",");
+			// temp.materia.nome = (eqp) atoi(ptr);
+			// ptr = strtok(NULL, ",");
+			// temp.materia[1] = (mat) atoi(ptr);
+
+			return temp;
+			
+		}
+		printf("Arquivo invalido!\n");
+	} else 
+		printf("Indice invalido!\n");
+	temp.removido = 1;
+	return temp;
+} 
+
+void imprimir_elementos(dado aluno){
+	printf("ALUNO\n");
+	printf("Codigo: %d\n", aluno.codigo);
+	printf("Nome: %s\n", aluno.nome);
+	printf("MATERIA\n");
+	printf("Nome:%s\n", aluno.materia.nome);
+	printf("Media:%.2f\n", aluno.materia.media);
+	printf("\n");
+}
+
+void listar_por_codigo(FILE *arquivo, arvore raiz) {
+	if(raiz != NULL) {
+		listar_por_codigo(arquivo, raiz->esquerda);
+		printf("\n_______________________________\n");
+		imprimir_elementos(buscar_aluno(arquivo, raiz->index->indice));
+		listar_por_codigo(arquivo, raiz->direita);
+	}
 }
 
 
 void carregarArquivo(tabela *tab) {
-    FILE *arq;
+    FILE *arquivo;
 	size_t len = 256;
-	char nome[16], *linha = (char*) malloc(len), delim[] = ";";
-	strcpy(nome, "indices_avl.dat");
+	char nome[16], *linha = (char*) malloc(len), delim[] = "|";
+	strcpy(nome, "indices.txt");
 
-	arq = fopen(nome, "r+");
-    
-    if(arq != NULL){
-		while(getdelim(&linha, &len, '\n', arq) > 0){
+	arquivo = fopen(nome, "r+");
+    if(arquivo != NULL){
+		if(ftell(arquivo) == 0){
+			fclose(arquivo);
+			return;
+		}
+		while(getdelim(&linha, &len, ',', arquivo) > 0){
   			char *ptr;
 			ptr = strtok(linha, delim);
 			int indice = atoi(ptr);
 			ptr = strtok(NULL, delim);
-			//tirar_enter(ptr);
             tab->indice = inserir_avl(inicializar_indice_avl(indice, atoi(ptr)),tab->indice, 0);
         }
-		fclose(arq);
+		fclose(arquivo);
  	}
  	free(linha);
 }
@@ -176,4 +247,38 @@ cJSON *carregarConteudoArquivoJson(FILE *arquivo, cJSON *root) {
     }
 
     return root;
+}
+
+void salvar_arquivo(char *nome, arvore raiz) {
+	FILE *arquivo;
+	arquivo = fopen(nome, "a+");
+	if(arquivo != NULL) {
+		salvar_auxiliar(raiz, arquivo);
+		fclose(arquivo);
+	}
+}
+
+void salvar_auxiliar(arvore raiz, FILE *arquivo){
+	if(raiz != NULL) {
+		
+		salvar_auxiliar(raiz->esquerda, arquivo);
+		fprintf(arquivo, "%d|%d,", raiz->index->indice, raiz->index->codigo);
+		salvar_auxiliar(raiz->direita, arquivo);
+	}
+
+}
+
+void finalizar_arquivo(tabela *tab) {
+    // Salve o JSON no arquivo
+    char *json_str = cJSON_Print(tab->root_dados);
+    fseek(tab->arquivo_dados, 0, SEEK_SET);
+    fwrite(json_str, 1, strlen(json_str), tab->arquivo_dados);
+
+    // Libere a memória
+    free(json_str);
+    cJSON_Delete(tab->root_dados);
+
+    // Feche o arquivo e salve os indices
+    fclose(tab->arquivo_dados);
+    salvar_arquivo("indices.txt", tab->indice);
 }
