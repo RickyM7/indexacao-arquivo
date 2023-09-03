@@ -30,6 +30,8 @@ int inicializarArquivo (tabela *tab);
 dado* ler_dados();
 int inserir_aluno(tabela *tab, dado *aluno, int *cresceu);
 void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno);
+void remover_aluno(tabela *tab, dado *aluno, int *diminuiu, int chave);
+dado buscar_aluno(FILE *arquivo, int chave);
 
 cJSON *criarMateria(char nome[50], float media);
 cJSON *criarAluno(int id, char *nome, int removido, cJSON *materias);
@@ -39,8 +41,11 @@ void criarArquivoJson(dado *aluno, FILE *arquivo);
 void carregarArquivo(tabela *tab);
 
 cJSON *carregarConteudoArquivoJson(FILE *arquivo, cJSON *root);
-void finalizar_arquivo(tabela *tab);
+void imprimir_elementos(dado aluno);
+void listar_por_codigo(FILE *arquivo, arvore raiz);
 
-void tirar_enter(char *string);
+void salvar_arquivo(char *nome, arvore raiz);
+void salvar_auxiliar(arvore raiz, FILE *arquivo);
+void finalizar_arquivo(tabela *tab);
 
 #endif
