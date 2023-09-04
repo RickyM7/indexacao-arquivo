@@ -10,9 +10,8 @@ int inicializarArquivo(tabela *tab) {
 		return inicializarArquivo(tab);
 	}
 	tab->root_dados = carregarConteudoArquivoJson(tab->arquivo_dados, tab->root_dados);
-	tab->indice = NULL;
 
-    carregarArquivo(tab);
+	tab->indice = carregar_arquivo_index(tab);
 	
     if(tab->arquivo_dados != NULL)
 		return 1;
@@ -25,8 +24,6 @@ int inserir_aluno(tabela *tab, dado *aluno, int *cresceu) {
     
     int posicaoNovoRegistro, retorno;
 	retorno = tab->arquivo_dados != NULL;
-
-    printf("%d", retorno);
 
 	if(retorno) {
 		fseek(tab->arquivo_dados, 0L, SEEK_END);
@@ -61,38 +58,18 @@ dado* ler_dados() {
 
 	novo->nome = strdup(aux);
 
-	printf("DADOS DA MATERIA\n");
-    printf("Nome: ");
-	scanf(" %[^\n]%*c", novo->materia.nome);
-
-	printf("Media: ");
-	while (scanf("%f", &novo->materia.media) != 1) {
-		printf("Insira apenas numeros: ");
-		while ((getchar()) != '\n');
-	}
-	while (getchar() != '\n');
-
 	free(aux);
 	novo->removido = 0;
 
 	return novo;
 }
 
-// Função para criar e preencher a estrutura de uma matéria
-cJSON *criarMateria(char nome[50], float media) {
-    cJSON *materia = cJSON_CreateObject();
-    cJSON_AddStringToObject(materia, "nome-materia", nome);
-    cJSON_AddNumberToObject(materia, "media", media);
-    return materia;
-}
-
 // Função para criar e preencher a estrutura de um aluno
-cJSON *criarAluno(int id, char *nome, int removido, cJSON *materias) {
+cJSON *criarAluno(int id, char *nome, int removido) {
     cJSON *aluno = cJSON_CreateObject();
     cJSON_AddNumberToObject(aluno, "id", id);
     cJSON_AddNumberToObject(aluno, "removido", removido);
     cJSON_AddStringToObject(aluno, "nome", nome);
-    cJSON_AddItemToObject(aluno, "matéria", materias);
     return aluno;
 }
 
@@ -106,11 +83,7 @@ cJSON *criarJSON(dado *aluno, cJSON *root) {
     	alunoArray = cJSON_AddArrayToObject(root, "aluno");
 	}
 
-    // Crie e adicione alunos com matérias
-    cJSON *materia = cJSON_CreateArray();
-    cJSON_AddItemToArray(materia, criarMateria(aluno->materia.nome, aluno->materia.media));
-
-    cJSON *a = criarAluno(aluno->codigo, aluno->nome, aluno->removido, materia);
+    cJSON *a = criarAluno(aluno->codigo, aluno->nome, aluno->removido);
     cJSON_AddItemToArray(alunoArray, a);
 
     return root;
@@ -188,9 +161,6 @@ void imprimir_elementos(dado aluno){
 	printf("ALUNO\n");
 	printf("Codigo: %d\n", aluno.codigo);
 	printf("Nome: %s\n", aluno.nome);
-	printf("MATERIA\n");
-	printf("Nome:%s\n", aluno.materia.nome);
-	printf("Media:%.2f\n", aluno.materia.media);
 	printf("\n");
 }
 
@@ -204,17 +174,19 @@ void listar_por_codigo(FILE *arquivo, arvore raiz) {
 }
 
 
-void carregarArquivo(tabela *tab) {
+arvore carregar_arquivo_index(tabela *tab) {
     FILE *arquivo;
-	size_t len = 256;
-	char nome[16], *linha = (char*) malloc(len), delim[] = "|";
+	size_t len;
+	char nome[12], *linha = (char*) malloc(len), delim[] = "|";
 	strcpy(nome, "indices.txt");
 
 	arquivo = fopen(nome, "r+");
+	fseek(arquivo, 0, SEEK_END);
+
     if(arquivo != NULL){
 		if(ftell(arquivo) == 0){
 			fclose(arquivo);
-			return;
+			return NULL;
 		}
 		while(getdelim(&linha, &len, ',', arquivo) > 0){
   			char *ptr;
@@ -226,6 +198,7 @@ void carregarArquivo(tabela *tab) {
 		fclose(arquivo);
  	}
  	free(linha);
+	return tab->indice;
 }
 
 cJSON *carregarConteudoArquivoJson(FILE *arquivo, cJSON *root) {

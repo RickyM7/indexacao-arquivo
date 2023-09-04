@@ -5,16 +5,10 @@
 #include "../cJSON/cJSON.h"
 #include <stdio.h>
 
-typedef struct materia {
-	char nome[50];
-    float media;
-} materia;
-
 typedef struct aluno {
 	int removido;
 	char* nome;
     int codigo;
-    materia materia;
 } dado;
 
 typedef struct tabela {
@@ -33,12 +27,11 @@ void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno);
 void remover_aluno(tabela *tab, dado *aluno, int *diminuiu, int chave);
 dado buscar_aluno(FILE *arquivo, int chave);
 
-cJSON *criarMateria(char nome[50], float media);
-cJSON *criarAluno(int id, char *nome, int removido, cJSON *materias);
+cJSON *criarAluno(int id, char *nome, int removido);
 cJSON *criarJSON(dado *aluno, cJSON *root);
 
 void criarArquivoJson(dado *aluno, FILE *arquivo);
-void carregarArquivo(tabela *tab);
+arvore carregar_arquivo_index(tabela *tab);
 
 cJSON *carregarConteudoArquivoJson(FILE *arquivo, cJSON *root);
 void imprimir_elementos(dado aluno);

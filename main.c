@@ -7,13 +7,10 @@ int main(int argc, char *argv[])
 {
 
 	// declaração da árvore
-	arvore a;
 	tabela tab;
 	int opcao, valor, cresceu = 0;
 	int indice, codigo;
 	dado aluno;
-
-	a = NULL;
 
 	if (inicializarArquivo(&tab))
 	{
@@ -30,20 +27,27 @@ int main(int argc, char *argv[])
 					printf("Aluno nao inserido\n");
 				break;
 			case 2:
+				//tab.indice = carregar_arquivo_index(&tab);
 				printf("Buscar Aluno por codigo\n\n");
-						printf("Codigo: ");
-						scanf("%d", &opcao);
-						indice = buscar_indice_avl(tab.indice, opcao);
-						printf("---------(%d)------------", indice);
-						if(indice >= 0) {
-							aluno = buscar_aluno(tab.arquivo_dados, indice);
-							if(!aluno.removido)
-								imprimir_elementos(aluno);
-							else
-								printf("Erro ao buscar");
-						} else
-							printf("Nao encontrado\n");
-							break;
+				printf("Codigo: ");
+				scanf("%d", &opcao);
+
+				if (tab.indice != NULL) {
+					indice = buscar_indice_avl(tab.indice, opcao);
+					printf("---------(%d)------------\n", indice);
+					if(indice >= 0) {
+						aluno = buscar_aluno(tab.arquivo_dados, indice);
+						printf("%d\n", aluno.codigo);
+						if(!aluno.removido)
+							imprimir_elementos(aluno);
+						else
+							printf("Erro ao buscar");
+					} else
+						printf("Nao encontrado\n");
+						break;
+				} else {
+					printf("Indice da tabela nao inicializado\n");
+				}
 				break;
 			case 99:
 				finalizar_arquivo(&tab);
