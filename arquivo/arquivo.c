@@ -181,6 +181,10 @@ arvore carregar_arquivo_index(tabela *tab) {
 	strcpy(nome, "indices.txt");
 
 	arquivo = fopen(nome, "r+");
+	if(arquivo == NULL) {
+		arquivo = fopen(nome, "w");
+	}
+
 	fseek(arquivo, 0, SEEK_END);
 
     if(arquivo != NULL){
