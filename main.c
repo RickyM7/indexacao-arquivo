@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	{
 		while (1)
 		{
-			printf("Digite um numero: \n");
+			printf("Digite uma opcao (1 para inserir e 2 para buscar): \n");
 			scanf("%d", &opcao);
 			switch (opcao)
 			{
@@ -34,10 +34,9 @@ int main(int argc, char *argv[])
 
 				if (tab.indice != NULL) {
 					indice = buscar_indice_avl(tab.indice, opcao);
-					printf("---------(%d)------------\n", indice);
+					printf("Indice: %d\n", indice);
 					if(indice >= 0) {
 						aluno = buscar_aluno(tab.arquivo_dados, indice);
-						printf("%d\n", aluno.codigo);
 						if(!aluno.removido)
 							imprimir_elementos(aluno);
 						else
