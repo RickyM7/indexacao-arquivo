@@ -185,7 +185,7 @@ arvore carregar_arquivo_index(tabela *tab) {
 		arquivo = fopen(nome, "w");
 	}
 
-	fseek(arquivo, 0, SEEK_END);
+	// fseek(arquivo, 0, SEEK_END);
 
     if(arquivo != NULL){
 		if(ftell(arquivo) == 0){
