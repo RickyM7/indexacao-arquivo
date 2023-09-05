@@ -126,25 +126,27 @@ dado buscar_aluno(FILE *arquivo, int indice) {
 	if(indice >= 0) { 
 		if(arquivo != NULL){
 			cJSON *root = cJSON_Parse((const char *) arquivo);
-			cJSON *aluno = cJSON_GetObjectItemCaseSensitive(root, "aluno");
-			if (aluno != NULL) {
-				temp.removido = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "removido"));
-				temp.codigo = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "id"));
-				strcpy(temp.nome, cJSON_GetStringValue(cJSON_GetObjectItemCaseSensitive(aluno, "nome")));
-			} else {
+			if (root == NULL) {
 				printf("Erro ao buscar aluno\n");
+			} else {
+				cJSON *aluno = cJSON_GetObjectItemCaseSensitive(root, "aluno");
+				if (aluno != NULL) {
+					temp.removido = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "removido"));
+					temp.codigo = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "id"));
+					strcpy(temp.nome, cJSON_GetStringValue(cJSON_GetObjectItemCaseSensitive(aluno, "nome")));
+				} else {
+					printf("Erro ao buscar aluno\n");
+				}
+				cJSON_Delete(root);
+				return temp;
 			}
-			cJSON_Delete(root);
-			return temp;
-			
 		}
 		printf("Arquivo invalido!\n");
 	} else 
 		printf("Indice invalido!\n");
 	temp.removido = 1;
 	return temp;
-} 
-
+}
 
 void imprimir_elementos(dado aluno){
 	printf("ALUNO\n");
