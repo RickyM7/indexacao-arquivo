@@ -125,28 +125,16 @@ dado buscar_aluno(FILE *arquivo, int indice) {
 	dado temp;
 	if(indice >= 0) { 
 		if(arquivo != NULL){
-			long len = sizeof(char) * 256;
-			char *buffer = (char *) malloc(len);
-			char delim[] = "|";
-			dado temp;
-			fseek(arquivo, indice, SEEK_SET);
-
-			getline(&buffer, &len, arquivo);
-			
-			char *ptr = strtok(buffer, delim);
-			temp.removido = atoi(ptr);
-
-			ptr = strtok(NULL, delim);
-			temp.codigo = atoi(ptr);
-			
-			ptr = strtok(NULL, delim);
-			strcpy(temp.nome, ptr);
-
-			// ptr = strtok(NULL, ",");
-			// temp.materia.nome = (eqp) atoi(ptr);
-			// ptr = strtok(NULL, ",");
-			// temp.materia[1] = (mat) atoi(ptr);
-
+			cJSON *root = cJSON_Parse(arquivo);
+			cJSON *aluno = cJSON_GetObjectItemCaseSensitive(root, "aluno");
+			if (aluno != NULL) {
+				temp.removido = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "removido"));
+				temp.codigo = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "id"));
+				strcpy(temp.nome, cJSON_GetStringValue(cJSON_GetObjectItemCaseSensitive(aluno, "nome")));
+			} else {
+				printf("Erro ao buscar aluno\n");
+			}
+			cJSON_Delete(root);
 			return temp;
 			
 		}
@@ -156,6 +144,7 @@ dado buscar_aluno(FILE *arquivo, int indice) {
 	temp.removido = 1;
 	return temp;
 } 
+
 
 void imprimir_elementos(dado aluno){
 	printf("ALUNO\n");
