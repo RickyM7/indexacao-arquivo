@@ -125,7 +125,7 @@ dado buscar_aluno(FILE *arquivo, int indice) {
 	dado temp;
 	if(indice >= 0) { 
 		if(arquivo != NULL){
-			cJSON *root = cJSON_Parse(arquivo);
+			cJSON *root = cJSON_Parse((const char *) arquivo);
 			cJSON *aluno = cJSON_GetObjectItemCaseSensitive(root, "aluno");
 			if (aluno != NULL) {
 				temp.removido = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(aluno, "removido"));
