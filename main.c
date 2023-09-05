@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 						if(!aluno.removido)
 							imprimir_elementos(aluno);
 						else
-							printf("Erro ao buscar");
+							printf("Erro ao buscar\n");
 					} else
 						printf("Nao encontrado\n");
 						break;
