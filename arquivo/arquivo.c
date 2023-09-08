@@ -139,21 +139,6 @@ void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno) {
 
 }
 
-void remover_aluno(tabela *tab, dado *aluno, int *diminuiu, int chave) {
-	if(tab != NULL) {
-		dado aluno = buscar_aluno(tab->arquivo_dados, chave);
-		if(!aluno.removido){
-			tab->indice = remover_avl(tab->indice, aluno.codigo, diminuiu);
-			fseek(tab->arquivo_dados, chave, SEEK_SET);
-			char str[] = "1";
-			fwrite(str, 1, sizeof(char), tab->arquivo_dados);
-			fseek(tab->arquivo_dados, 0L, SEEK_END);
-		}
-		else
-			printf("Erro ao remover\n");
-	}
-}
-
 char *limpar_linha(char *linha) {
     // Remove espaços em branco, tabulações e caracteres de controle do início da linha
     while (isspace((unsigned char)(*linha))) {
@@ -228,15 +213,6 @@ void imprimir_elementos(dado aluno){
 	printf("Codigo: %d\n", aluno.codigo);
 	printf("Nome: %s\n", aluno.nome);
 	printf("\n");
-}
-
-void listar_por_codigo(FILE *arquivo, arvore raiz) {
-	if(raiz != NULL) {
-		listar_por_codigo(arquivo, raiz->esquerda);
-		printf("\n_______________________________\n");
-		imprimir_elementos(buscar_aluno(arquivo, raiz->index->indice));
-		listar_por_codigo(arquivo, raiz->direita);
-	}
 }
 
 

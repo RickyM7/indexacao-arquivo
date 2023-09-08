@@ -28,7 +28,6 @@ int inicializarArquivo (tabela *tab);
 dado* ler_dados();
 int inserir_aluno(tabela *tab, dado *aluno, int *cresceu);
 void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno);
-void remover_aluno(tabela *tab, dado *aluno, int *diminuiu, int chave);
 dado buscar_aluno(FILE *arquivo, int chave);
 
 cJSON *criarAluno(int id, char *nome, int removido, int idade, char *data_nascimento, int CEP,long long int telefone, char *email, char *nome_pais);
@@ -39,7 +38,6 @@ arvore carregar_arquivo_index(tabela *tab);
 
 cJSON *carregarConteudoArquivoJson(FILE *arquivo, cJSON *root);
 void imprimir_elementos(dado aluno);
-void listar_por_codigo(FILE *arquivo, arvore raiz);
 
 void salvar_arquivo(char *nome, arvore raiz);
 void salvar_auxiliar(arvore raiz, FILE *arquivo);
