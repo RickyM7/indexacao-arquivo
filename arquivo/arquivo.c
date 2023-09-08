@@ -139,13 +139,17 @@ void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno) {
 
 }
 
-char *limpar_linha(char *linha) {
-    // Remove espaços em branco, tabulações e caracteres de controle do início da linha
+char *limpar_linha(const char *linha_original) {
+    char *linha = strdup(linha_original);  // Crie uma cópia da linha original
+    if (linha == NULL) {
+        printf("Erro ao alocar memória\n");
+        return NULL;
+    }
+
     while (isspace((unsigned char)(*linha))) {
         linha++;
     }
 
-    // Encontra o último caractere não vazio na linha
     char *fim = linha + strlen(linha) - 1;
     while (fim >= linha && (isspace((unsigned char)(*fim)) || iscntrl((unsigned char)(*fim)))) {
         *fim = '\0';
@@ -167,8 +171,6 @@ dado buscar_aluno(FILE *arquivo, int indice) {
 
         fseek(arquivo, indice, SEEK_SET);
 
-        size_t comprimento_atual = 0;
-
         int estado = 0;  // 0 = procurando por "aluno", 1 = procurando por elementos dentro do array "aluno"
 		while (fgets(linha, tamanho_buffer, arquivo) != NULL) {
 		    char *cleaned_line = limpar_linha(linha);
@@ -187,11 +189,19 @@ dado buscar_aluno(FILE *arquivo, int indice) {
 		        }
 		
 		        if (strstr(cleaned_line, "\"nome\":") != NULL) {
-		            strcpy(temp.nome, strstr(cleaned_line, ":") + 3);  // +3 para ignorar ": " no início do valor
-		            char *aspas_fim = strchr(temp.nome, '"');
-		            if (aspas_fim != NULL) {
-		                *aspas_fim = '\0';
-		            }
+		            char *valor_nome = strstr(cleaned_line, ":") + 3;
+    				size_t tamanho_nome = strlen(valor_nome) + 1; // +1 para o caractere nulo
+    				temp.nome = (char *)malloc(tamanho_nome);
+
+    				if (temp.nome != NULL) {
+    				    strcpy(temp.nome, valor_nome);
+    				    char *aspas_fim = strchr(temp.nome, '"');
+    				    if (aspas_fim != NULL) {
+    				        *aspas_fim = '\0';
+    				    }
+    				} else {
+    				    printf("Erro ao alocar memória para temp.nome\n");
+    				}
 		
 		            // Retorne ao estado de procurar "aluno" após encontrar um elemento completo
 		            estado = 0;
