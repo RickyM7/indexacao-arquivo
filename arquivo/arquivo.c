@@ -54,23 +54,59 @@ dado* ler_dados() {
 
     printf("Nome: ");
 	fgets(aux, 256, stdin);
-
 	char *token = strtok(aux, "\n");
-
 	novo->nome = strdup(aux);
 
-	free(aux);
+	printf("Idade: ");
+	while (scanf("%d", &novo->idade) != 1) {
+        printf("Insira apenas numeros: ");
+        while ((getchar()) != '\n');
+    }
+    while (getchar() != '\n');
+
+	printf("Data de Nascimento (Formato dd/mm/yyyy): ");
+    fgets(novo->data_nascimento, sizeof(novo->data_nascimento), stdin);
+    strtok(novo->data_nascimento, "\n");
+
+	printf("CEP: ");
+	while (scanf("%d", &novo->CEP) != 1) {
+        printf("Insira apenas numeros: ");
+        while ((getchar()) != '\n');
+    }
+    while (getchar() != '\n');
+
+	printf("Telefone: ");
+    scanf("%lld", &novo->telefone);
+    while (getchar() != '\n');
+
+	printf("Email: ");
+    fgets(aux, 256, stdin);
+    token = strtok(aux, "\n");
+    novo->email = strdup(aux);
+
+	printf("Nome dos Pais: ");
+    fgets(aux, 256, stdin);
+    token = strtok(aux, "\n");
+    novo->nome_pais = strdup(aux);
+
 	novo->removido = 0;
+	free(aux);
 
 	return novo;
 }
 
 // Função para criar e preencher a estrutura de um aluno
-cJSON *criarAluno(int id, char *nome, int removido) {
+cJSON *criarAluno(int id, char *nome, int removido, int idade, char *data_nascimento, int CEP,long long int telefone, char *email, char *nome_pais) {
     cJSON *aluno = cJSON_CreateObject();
     cJSON_AddNumberToObject(aluno, "id", id);
     cJSON_AddNumberToObject(aluno, "removido", removido);
     cJSON_AddStringToObject(aluno, "nome", nome);
+	cJSON_AddNumberToObject(aluno, "idade", idade);
+    cJSON_AddStringToObject(aluno, "data_nascimento", data_nascimento);
+    cJSON_AddNumberToObject(aluno, "CEP", CEP);
+    cJSON_AddNumberToObject(aluno, "telefone", telefone);
+    cJSON_AddStringToObject(aluno, "email", email);
+    cJSON_AddStringToObject(aluno, "nome_pais", nome_pais);
     return aluno;
 }
 
@@ -84,13 +120,11 @@ cJSON *criarJSON(dado *aluno, cJSON *root) {
     	alunoArray = cJSON_AddArrayToObject(root, "aluno");
 	}
 
-    cJSON *a = criarAluno(aluno->codigo, aluno->nome, aluno->removido);
+    cJSON *a = criarAluno(aluno->codigo, aluno->nome, aluno->removido, aluno->idade, aluno->data_nascimento, aluno->CEP, aluno->telefone, aluno->email, aluno->nome_pais);
     cJSON_AddItemToArray(alunoArray, a);
 
     return root;
 }
-
-
 
 void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno) {
     criarJSON(aluno, root);
@@ -104,7 +138,6 @@ void salvar_aluno(FILE *arquivo, cJSON *root, dado *aluno) {
     free(json_str);
 
 }
-
 
 void remover_aluno(tabela *tab, dado *aluno, int *diminuiu, int chave) {
 	if(tab != NULL) {
