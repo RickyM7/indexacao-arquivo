@@ -4,9 +4,9 @@ Esse repositório tem a finalidade de implementar em uma árvore o uso de índic
 Um índice é um mapeamento que associa a cada chave, uma referência ao registro que a contém. Assim, dada uma chave de pesquisa, o índice fornece imediatamente a localização do registro correspondente.
 
 ### Compilação do executável:
-#### Vesão normal (txt):
+#### Versão normal (txt):
 ```gcc -o indexacao arquivo/arquivo-json.c arvore_avl/avl.c main.c -g```
-#### Vesão JSON:
+#### Versão JSON:
 ```gcc -o indexacao cJSON/cJSON.c arquivo/arquivo-json.c arvore_avl/avl.c main-json.c -g```
 
 ### Rodar Programa Após Compilação:
