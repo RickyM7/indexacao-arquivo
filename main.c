@@ -17,9 +17,11 @@ int main(int argc, char *argv[]) {
             switch (opcao) {
                 case 1:
                     printf("INSERIR ALUNO\n");
-                    if (inserir_aluno(&tab, ler_dados(&tab), &cresceu))
+                    if (inserir_aluno(&tab, ler_dados(&tab), &cresceu)) {
                         printf("Aluno Cadastrado com sucesso\n");
-                    else
+                        salvar_arquivo("indices.txt", tab.indice);
+
+                    } else
                         printf("Aluno nao inserido\n");
                     break;
                 case 2:
