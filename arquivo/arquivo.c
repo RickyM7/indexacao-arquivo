@@ -89,18 +89,39 @@ void salvar_aluno(FILE *arquivo, dado *aluno) {
     fprintf(arquivo, "%d|%s|%d|%s|%d|%s|%lld|%s\n", aluno->codigo, aluno->nome, aluno->idade, aluno->data_nascimento, aluno->CEP, aluno->nacionalidade, aluno->telefone, aluno->email);
 }
 
-dado buscar_aluno(FILE *arquivo, int codigo) {
-    dado temp;
-    rewind(arquivo);
+dado buscar_aluno(tabela tab, int codigo) {
+    // Verifica se o arquivo de índices está vazio
+    FILE *indiceArquivo = fopen("indices.txt", "r");
+    if (indiceArquivo != NULL) {
+        fseek(indiceArquivo, 0, SEEK_END);
+        long tamanho = ftell(indiceArquivo);
+        fclose(indiceArquivo);
 
-    while (fscanf(arquivo, "%d|%[^|]|%d|%[^|]|%d|%[^|]|%lld|%s\n", &temp.codigo, temp.nome, &temp.idade, temp.data_nascimento, &temp.CEP, temp.nacionalidade, &temp.telefone, temp.email) != EOF) {
-        if (temp.codigo == codigo && !temp.removido) {
-            return temp;
+        if (tamanho == 0) {
+            dado aluno_vazio;
+            aluno_vazio.removido = 1;  // Marca como aluno não encontrado
+            return aluno_vazio;
         }
     }
 
-    temp.removido = 1;  // Aluno não encontrado
-    return temp;
+    int indice = buscar_indice_avl(tab.indice, codigo);
+
+    if (indice >= 0) {
+        // Encontrou o índice na árvore AVL, agora vamos buscar no arquivo de dados
+        FILE *dadosArquivo = tab.arquivo_dados;
+        rewind(dadosArquivo);
+
+        dado temp;
+        while (fscanf(dadosArquivo, "%d|%[^|]|%d|%[^|]|%d|%[^|]|%lld|%s\n", &temp.codigo, temp.nome, &temp.idade, temp.data_nascimento, &temp.CEP, temp.nacionalidade, &temp.telefone, temp.email) != EOF) {
+            if (temp.codigo == codigo && !temp.removido) {
+                return temp;
+            }
+        }
+    }
+
+    dado aluno_nao_encontrado;
+    aluno_nao_encontrado.removido = 1;  // Marca como aluno não encontrado
+    return aluno_nao_encontrado;
 }
 
 arvore carregar_arquivo_index(tabela *tab, int *cresceu) {
