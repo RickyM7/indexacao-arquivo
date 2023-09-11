@@ -40,6 +40,7 @@ arvore inserir_avl (indice_avl *v, arvore raiz, int *cresceu){
 		nova->esquerda = NULL;
 		nova->direita = NULL;
 		nova->index = v;
+		nova->valor = v->indice;
 		nova->fb = 0;
 
 		*cresceu = 1;

@@ -4,15 +4,15 @@
 #include <ctype.h>
 #include "arquivo.h"
 
-int inicializarArquivo(tabela *tab) {
+int inicializarArquivo(tabela *tab, int *cresceu) {
 	tab->arquivo_dados = fopen("alunos.json", "r+b");
 	if(tab->arquivo_dados == NULL) {
 		tab->arquivo_dados = fopen("alunos.json", "a+");
-		return inicializarArquivo(tab);
+		return inicializarArquivo(tab, cresceu);
 	}
 	tab->root_dados = carregarConteudoArquivoJson(tab->arquivo_dados, tab->root_dados);
 
-	tab->indice = carregar_arquivo_index(tab);
+	tab->indice = carregar_arquivo_index(tab, cresceu);
 	
     if(tab->arquivo_dados != NULL)
 		return 1;
@@ -226,18 +226,15 @@ void imprimir_elementos(dado aluno){
 }
 
 
-arvore carregar_arquivo_index(tabela *tab) {
+arvore carregar_arquivo_index(tabela *tab, int *cresceu) {
     FILE *arquivo;
 	size_t len;
 	char nome[12], *linha = (char*) malloc(len), delim[] = "|";
 	strcpy(nome, "indices.txt");
 
-	arquivo = fopen(nome, "r+");
-	if(arquivo == NULL) {
-		arquivo = fopen(nome, "w");
-	}
+	arquivo = fopen(nome, "a+");
 
-	// fseek(arquivo, 0, SEEK_END);
+	fseek(arquivo, 0, SEEK_SET);
 
     if(arquivo != NULL){
 		if(ftell(arquivo) == 0){
@@ -249,7 +246,7 @@ arvore carregar_arquivo_index(tabela *tab) {
 			ptr = strtok(linha, delim);
 			int indice = atoi(ptr);
 			ptr = strtok(NULL, delim);
-            tab->indice = inserir_avl(inicializar_indice_avl(indice, atoi(ptr)),tab->indice, 0);
+            tab->indice = inserir_avl(inicializar_indice_avl(indice, atoi(ptr)),tab->indice, cresceu);
         }
 		fclose(arquivo);
  	}

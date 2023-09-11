@@ -8,11 +8,11 @@ int main(int argc, char *argv[])
 
 	// declaração da árvore
 	tabela tab;
-	int opcao, valor, cresceu = 0;
+	int opcao, valor, cresceu;
 	int indice, codigo;
 	dado aluno;
 
-	if (inicializarArquivo(&tab))
+	if (inicializarArquivo(&tab, &cresceu))
 	{
 		while (1)
 		{
@@ -25,9 +25,10 @@ int main(int argc, char *argv[])
 					printf("Aluno Cadastrado com sucesso\n");
 				else
 					printf("Aluno nao inserido\n");
+				pre_order_avl(tab.indice);
 				break;
 			case 2:
-				//tab.indice = carregar_arquivo_index(&tab);
+				// tab.indice = carregar_arquivo_index(&tab, &cresceu);
 				printf("Buscar Aluno por codigo\n\n");
 				printf("Codigo: ");
 				scanf("%d", &opcao);

@@ -23,7 +23,7 @@ typedef struct tabela {
 	arvore indice;
 } tabela;
 
-int inicializarArquivo (tabela *tab);
+int inicializarArquivo (tabela *tab, int *cresceu);
 
 dado* ler_dados();
 int inserir_aluno(tabela *tab, dado *aluno, int *cresceu);
@@ -34,7 +34,7 @@ cJSON *criarAluno(int id, char *nome, int removido, int idade, char *data_nascim
 cJSON *criarJSON(dado *aluno, cJSON *root);
 
 void criarArquivoJson(dado *aluno, FILE *arquivo);
-arvore carregar_arquivo_index(tabela *tab);
+arvore carregar_arquivo_index(tabela *tab, int *cresceu);
 
 cJSON *carregarConteudoArquivoJson(FILE *arquivo, cJSON *root);
 void imprimir_elementos(dado aluno);
