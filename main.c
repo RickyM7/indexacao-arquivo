@@ -26,11 +26,9 @@ int main(int argc, char *argv[]) {
                     printf("BUSCAR ALUNO POR CODIGO\n");
                     printf("CODIGO: ");
                     scanf("%d", &opcao);
-                    while (getchar() != '\n')
-                        ;
+                    while (getchar() != '\n');
                     system("clear");
-
-                    dado aluno = buscar_aluno(tab.arquivo_dados, opcao);
+                    dado aluno = buscar_aluno(tab, opcao);
                     if (!aluno.removido)
                         imprimir_elementos(aluno);
                     else

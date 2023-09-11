@@ -27,7 +27,7 @@ dado *ler_dados(tabela *tab);
 int inserir_aluno(tabela *tab, dado *aluno, int *cresceu);
 int aluno_ja_existe(tabela *tab, int codigo);
 void salvar_aluno(FILE *arquivo, dado *aluno);
-dado buscar_aluno(FILE *arquivo, int codigo);
+dado buscar_aluno(tabela tab, int codigo);
 arvore carregar_arquivo_index(tabela *tab, int *cresceu);
 
 void salvar_arquivo(char *nome, arvore raiz);
