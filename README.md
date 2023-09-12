@@ -5,7 +5,7 @@ Um índice é um mapeamento que associa a cada chave, uma referência ao registr
 
 ### Compilação do executável:
 #### Versão normal (txt):
-```gcc -o indexacao arquivo/arquivo-json.c arvore_avl/avl.c main.c -g```
+```gcc -o indexacao arquivo/arquivo.c arvore_avl/avl.c main.c -g```
 #### Versão JSON:
 ```gcc -o indexacao cJSON/cJSON.c arquivo/arquivo-json.c arvore_avl/avl.c main-json.c -g```
 
